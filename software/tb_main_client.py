@@ -5,12 +5,18 @@ import time
 
 clientInst = PanikDeckeClient()
 
-clientInst.speed(5) # degree per second
+clientInst.speed(1) # degree per second
 
-time.sleep(3)
+time.sleep(5)
 
-clientInst.stop_at(11) # degree
+clientInst.speed(0.5) # degree per second
 
-time.sleep(2)
+time.sleep(5)
+
+clientInst.stop()
+
+#clientInst.stop_at(11) # degree
+
+#time.sleep(2)
 
 clientInst.shutdown()

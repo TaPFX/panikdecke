@@ -1,7 +1,4 @@
 
-
-
-
 import argparse
 import random
 import time
@@ -28,3 +25,6 @@ class PanikDeckeClient:
 
     def stop_at(self, stop_at_val):
         self.client.send_message("/stop_at", stop_at_val)
+
+    def stop(self):
+        self.client.send_message("/stop", True)
