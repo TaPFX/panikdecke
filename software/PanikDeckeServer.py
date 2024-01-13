@@ -7,15 +7,10 @@ import numpy as np
 
 from Controller import Controller, SPEED_THRESHOLD
 
-from matplotlib import pyplot as plt
-
-from datetime import datetime  
+from datetime import datetime
 
 def get_datetime_str():
     return datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
-
-def print_out(str_in):
-    print(f"{get_datetime_str()}: {str_in}")
 
 class PanikDeckeServer:
     def __init__(self, ip = "127.0.0.1", port = 1337) -> None:
@@ -33,6 +28,11 @@ class PanikDeckeServer:
         self.speed = 0
         self.stop_at = None
 
+        self.logging = True
+        self.logging_filename = "PanikDeckeServer.log"
+
+        self.print_out("\r\r============================================================================\r\r")
+
         asyncio.run(self.init_server())
 
     async def init_server(self):
@@ -43,37 +43,34 @@ class PanikDeckeServer:
 
     async def server_func(self):
         ctrlInst = Controller()
-        print_out("Server started.")
+        ctrlInst.dbg = True # set later to False when running on raspi
+        self.print_out("server_func(): Server started.")
         while(not self.shutdown):
             await asyncio.sleep(ctrlInst.update(self.speed, self.stop_at))
-        if(ctrlInst.dbg):
-            time = np.cumsum(ctrlInst.dbg_trigger)
-            fig, ax = plt.subplots()
-            twin1 = ax.twinx()
-            ax.plot(time, ctrlInst.dbg_pos, 'x-', label='pos', color='b')
-            ax.set_ylabel("position in °")
-            twin1.plot(time, ctrlInst.dbg_speed, 'x-', label='speed cmd', color='r')
-            twin1.plot(time, ctrlInst.dbg_curr_speed, 'x-', label='speed actual', color='k')
-            twin1.set_ylabel("speed in °/s")
-            ax.set_xlabel("time in s")
-            fig.legend()
-            plt.show()
+        ctrlInst.dbg_plot()
 
     def shutdown_now(self, address, *args):
         self.shutdown = args[0]
-        print_out("Shutdown received.")
+        self.print_out("shutodwn_now(): Shutdown received.")
 
     def set_speed(self, address, *args):
         self.stop_at = None
         self.speed = args[0]
-        print_out(f"Speed set to {self.speed}.")
+        self.print_out(f"set_speed(): Speed set to {self.speed}.")
         if(abs(self.speed) < SPEED_THRESHOLD):
-            print_out(f"Warning: Speed too low, ignoring.")
+            self.print_out(f"Warning: Speed too low, ignoring.")
 
     def set_stop(self, address, *args):
         self.stop_at = args[0]
-        print_out(f"Stop at {self.stop_at}")
+        self.print_out(f"set_stop(): Stop at {self.stop_at}")
 
     def stop_immediately(self, address, *args):
         self.speed = 0
-        print_out(f"Stop immediatley.")
+        self.print_out(f"set_stop(): Stop immediatley.")
+
+    def print_out(self, str_in):
+        str_format = f"{get_datetime_str()}: {str_in}"
+        print(str_format)
+        if(self.logging):
+            with open(self.logging_filename, "a") as myfile:
+                myfile.write(str_format + "\r")
