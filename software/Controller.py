@@ -3,10 +3,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 from datetime import datetime
 
+import os
+
 STEP_PER_REVOLUTION = 3200 # set this by the 3 switches
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
 MAX_ACCELERATION = 0.05 # 1° per second**2
+MAX_SECONDS_PER_TURNAROUND = 3
 
 def get_datetime_str():
     return datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
@@ -40,18 +43,43 @@ class Controller:
 
         else:
             if( stop_at != self.stop_at_old):
-                #calculate ramp-down array
+
                 self.stop_at_old = stop_at
-                # TODO
-                # use curr_speed to calculate how to ramp down to achieve the desired location
-                self.speed_ramp_down_array = list(np.arange(1, 0, -0.04))
+
+                if(self.curr_speed > SPEED_THRESHOLD):
+                    self.speed_ramp_down_array = list(np.arange(self.curr_speed, 0, - MAX_ACCELERATION))
+                    self.speed_ramp_down_array.append(0)
+                    delta_pos   = stop_at - self.curr_pos # positions to go
+                elif(self.curr_speed < SPEED_THRESHOLD):
+                    self.speed_ramp_down_array = list(np.arange(self.curr_speed, 0, MAX_ACCELERATION))
+                    self.speed_ramp_down_array.append(0)
+                    delta_pos   = self.curr_pos - stop_at # positions to go
+                else:
+                    self.print_out("Stop at routine was called, but curr_speed was zero or less than SPEED_THRESHOLD, ignoring stop_at command.")
+                    self.speed_ramp_down_array = list(np.array([0]))
+                    delta_pos = 0
+                
+                if(delta_pos < 0):
+                    delta_pos += 360
+
+                N = len(self.speed_ramp_down_array)
+                braking_to_go = N*LSB_ANGLE
+
+                if(braking_to_go > delta_pos): # cannot brake with MAX_ACCELERATION, do one turnaround more
+                    delta_corr = round((braking_to_go - delta_pos)/LSB_ANGLE)
+                    self.speed_ramp_down_array = list(np.insert(self.speed_ramp_down_array, 0, np.ones(STEP_PER_REVOLUTION - delta_corr)*self.curr_speed))
+                else: # default, run with curr_speed until braking
+                    N_to_go = round((delta_pos - braking_to_go)/LSB_ANGLE)
+                    self.speed_ramp_down_array = list(np.insert(self.speed_ramp_down_array, 0, np.ones(N_to_go)*self.curr_speed))
+
+                if(np.isclose(self.speed_ramp_down_array[-1], 0)):
+                   self.speed_ramp_down_array[-1] = 0
+                
                 if( self.speed_ramp_down_array[-1] != 0 ):
                     last_acc = self.speed_ramp_down_array[-2] - self.speed_ramp_down_array[-1]
                     if(abs(last_acc) > MAX_ACCELERATION ):
                         self.PANIC_OFF = True
                         self.print_out("Controller: Something went terribly wrong at the stop_at routine, PANIC_OFF is triggered. Sanity check went wrong, consult software engineer.")
-                    else:
-                        self.speed_ramp_down_array.append(0)
 
             if(self.speed_ramp_down_array != []):
                 speed_new = self.speed_ramp_down_array.pop(0)
@@ -78,6 +106,10 @@ class Controller:
             self.dbg_pos.append(self.curr_pos)
             self.dbg_trigger.append(1/f_trigger)
 
+        if(f_trigger > STEP_PER_REVOLUTION / MAX_SECONDS_PER_TURNAROUND):
+            self.PANIC_OFF = True
+            self.print_out("Controller: PANIC_OFF was triggered, MAX SPEED was commanded, but this shall be prevented by software!.")
+
         return 1/f_trigger
     
     def limit_acc(self, speed):
@@ -91,7 +123,7 @@ class Controller:
     def update_pos(self, f_trigger, stop_at):
         new_state = self.get_switch_state()
         if(self.switch_state == new_state or stop_at is not None):
-            self.curr_pos += self.curr_speed*f_trigger
+            self.curr_pos += self.curr_speed*1/f_trigger
             self.curr_pos = self.curr_pos % 360
         else:
             if(new_state == True):

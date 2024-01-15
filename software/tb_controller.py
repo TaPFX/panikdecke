@@ -7,29 +7,41 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-t_end = 60 #s
-t_sum = 0
+VERIF_SPEED_DELTA_THRES = 0.01
+VERIF_POS_DELTA_THRES = 1 # auf 1° genau
 
 ctrlInst = Controller()
 ctrlInst.dbg = True
 
-speed = 0.5
-stop_at = None
+def run_simulation(speed, stop_at, t_end):
+    t_sum = 0
+    while(t_sum < t_end):
+        t_sum += ctrlInst.update(speed, stop_at)
+    if ( stop_at is None and abs(ctrlInst.curr_speed - speed ) > VERIF_SPEED_DELTA_THRES):
+        raise Exception("Speed not correctly verified")
+    if( stop_at is not None and abs(ctrlInst.curr_pos - stop_at) > VERIF_POS_DELTA_THRES):
+        raise Exception("Position not correctly verified")
 
-while(t_sum < t_end):
-    t_sum += ctrlInst.update(speed, stop_at)
+# test speed
+run_simulation(speed = 15, stop_at = None, t_end = 60)
 
-speed = 1
-t_sum = 0
+# test stop_at
+run_simulation(speed = 30, stop_at = 100, t_end = 60)
 
-while(t_sum < t_end):
-    t_sum += ctrlInst.update(speed, stop_at)
+# increase speed again
+run_simulation(speed = -30, stop_at = None, t_end = 30)
 
-stop_at = 30
-t_sum = 0
+# test stop_at with one more turnaround
+if(ctrlInst.curr_speed > 0):
+    stop_at = ctrlInst.curr_pos + 0.1
+elif(ctrlInst.curr_speed < 0):
+    stop_at = ctrlInst.curr_pos - 0.1
 
-while(t_sum < t_end):
-    t_sum += ctrlInst.update(speed, stop_at)
+run_simulation(speed = 30, stop_at = stop_at, t_end = 120)
+print(f"Curr_pos: {ctrlInst.curr_pos}")
+
+if(ctrlInst.PANIC_OFF):
+    raise Exception("PANIC OFF WAS TRIGGERED")
 
 ctrlInst.dbg_plot()
 

@@ -5,12 +5,22 @@ import asyncio
 
 import numpy as np
 
+import os
+
 from Controller import Controller, SPEED_THRESHOLD
 
 from datetime import datetime
 
 def get_datetime_str():
     return datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
+
+if(os.name != 'nt'): # can be tested on windows shell without RPi
+    IS_RASPI = True
+    import RPi.GPIO as GPIO
+    # GPIO-Pin-Nummer
+    gpio_pin = 2
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(gpio_pin, GPIO.OUT)
 
 class PanikDeckeServer:
     def __init__(self, ip = "127.0.0.1", port = 1337) -> None:
@@ -39,6 +49,8 @@ class PanikDeckeServer:
         self.server = AsyncIOOSCUDPServer((self.ip, self.port), self.dispatcher, asyncio.get_event_loop())
         self.transport, self.protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving
         await self.server_func()
+        if(os.name != 'nt'):
+            GPIO.cleanup()
         self.transport.close()  # Clean up serve endpoint
 
     async def server_func(self):
@@ -46,7 +58,13 @@ class PanikDeckeServer:
         ctrlInst.dbg = True # set later to False when running on raspi
         self.print_out("server_func(): Server started.")
         while(not self.shutdown):
-            await asyncio.sleep(ctrlInst.update(self.speed, self.stop_at))
+            t_wait = ctrlInst.update(self.speed, self.stop_at)
+            if(os.name != 'nt'):
+                GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
+            await asyncio.sleep(t_wait/2)
+            if(os.name != 'nt'):
+                GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
+            await asyncio.sleep(t_wait/2)
         ctrlInst.dbg_plot()
 
     def shutdown_now(self, address, *args):
@@ -62,7 +80,7 @@ class PanikDeckeServer:
 
     def set_stop(self, address, *args):
         self.stop_at = args[0]
-        self.print_out(f"set_stop(): Stop at {self.stop_at}")
+        self.print_out(f"set_stop(): Stop at {self.stop_at}°.")
 
     def stop_immediately(self, address, *args):
         self.speed = 0
