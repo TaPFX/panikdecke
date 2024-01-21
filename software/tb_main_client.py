@@ -6,16 +6,13 @@ import os, socket
 
 Raspi_IP = "192.168.178.90"
 
-test_on_pc = False # set to true if talk to localhost server
-
-#if(not test_on_pc):
 clientInst = PanikDeckeClient(ip=Raspi_IP)
-#else:
+# or on localhost:
 #clientInst = PanikDeckeClient()
 
-#clientInst.speed(0.2) # degree per second
+clientInst.speed(200) # degree per second
 
-#time.sleep(5)
+time.sleep(10)
 
 #clientInst.speed(0.4) # degree per second
 

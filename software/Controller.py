@@ -8,7 +8,7 @@ import os
 STEP_PER_REVOLUTION = 400 # set this by the 3 switches
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
-MAX_ACCELERATION = 0.05 # 1° per second**2
+MAX_ACCELERATION = 5 # 1° per second**2
 MAX_SECONDS_PER_TURNAROUND = 3
 
 def get_datetime_str():
@@ -109,6 +109,7 @@ class Controller:
 
         if(f_trigger > STEP_PER_REVOLUTION / MAX_SECONDS_PER_TURNAROUND):
             self.PANIC_OFF = True
+            self.out_en = False
             self.print_out("Controller: PANIC_OFF was triggered, MAX SPEED was commanded, but this shall be prevented by software!.")
 
         return 1/f_trigger, self.out_en
