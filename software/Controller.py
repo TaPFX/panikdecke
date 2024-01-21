@@ -87,14 +87,6 @@ class Controller:
             else:
                 speed_new = 0
 
-            # TODO consider curr_speed sign for polarity for check how far is the curr_pos and stop_at away
-            # delta_pos   = self.curr_pos - stop_at
-            # delta_speed = self.curr_speed - 0
-            # TODO calculate required acceleration when ramping down to stop_at
-            # if acceleration is smaller than MAX_ACCELERATION, do a ramp down
-            # otherwise add one turn (360) to the delta_pos, calculate required acceleration, and do a ramp down
-            # consider rounding errors for reaching stop_at
-
         f_trigger = self.trigger_motor(speed_new)
         self.curr_speed = speed_new
         #self.curr_speed = f_3db(f_trigger, self.curr_speed, speed_new) # evtl. rc filter implementieren (Achtung: variable sample frequenz!)
@@ -108,9 +100,11 @@ class Controller:
             self.dbg_trigger.append(1/f_trigger)
 
         if(f_trigger > STEP_PER_REVOLUTION / MAX_SECONDS_PER_TURNAROUND):
+            f_trigger = 1
             self.PANIC_OFF = True
             self.out_en = False
             self.print_out("Controller: PANIC_OFF was triggered, MAX SPEED was commanded, but this shall be prevented by software!.")
+            self.print_out(f"f_trigger: {f_trigger}, f_max : {STEP_PER_REVOLUTION / MAX_SECONDS_PER_TURNAROUND}")
 
         return 1/f_trigger, self.out_en
     
