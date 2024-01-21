@@ -23,6 +23,7 @@ class Controller:
         self.speed_ramp_down_array = None
 
         self.switch_state = False
+        self.out_en = False
 
         self.PANIC_OFF = False
 
@@ -110,7 +111,7 @@ class Controller:
             self.PANIC_OFF = True
             self.print_out("Controller: PANIC_OFF was triggered, MAX SPEED was commanded, but this shall be prevented by software!.")
 
-        return 1/f_trigger
+        return 1/f_trigger, self.out_en
     
     def limit_acc(self, speed):
         delta_speed = speed - self.curr_speed
@@ -140,9 +141,11 @@ class Controller:
     def trigger_motor(self, speed):
         # check if commanded speed is larger than threshold
         if (abs(speed) < SPEED_THRESHOLD):
+            self.out_en = False
             return  1/ 1.0 # if speed is nearly zero, do not trigger and wait for 1s and try again
             # this prevents from waiting until infinity
 
+        self.out_en = True
         f_trigger = abs( speed / LSB_ANGLE )
 
         # TODO trigger motor here and set direction pin polarity

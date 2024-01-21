@@ -58,7 +58,7 @@ class PanikDeckeServer:
         ctrlInst.dbg = True # set later to False when running on raspi
         self.print_out("server_func(): Server started.")
         while(not self.shutdown):
-            t_wait = ctrlInst.update(self.speed, self.stop_at)
+            t_wait, out_en = ctrlInst.update(self.speed, self.stop_at)
             if(os.name != 'nt'):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
             await asyncio.sleep(t_wait/2)
