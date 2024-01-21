@@ -1,4 +1,8 @@
 
 from PanikDeckeServer import PanikDeckeServer
+import os
 
-serverInst = PanikDeckeServer()
+if(os != 'nt'):
+    serverInst = PanikDeckeServer(ip='Panikdecke')
+else:
+    serverInst = PanikDeckeServer() #run on localhost

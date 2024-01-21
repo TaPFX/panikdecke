@@ -7,11 +7,11 @@ from pythonosc import udp_client
 
 class PanikDeckeClient:
   
-    def __init__(self) -> None:
+    def __init__(self, ip="127.0.0.1", port=1337) -> None:
         self.parser = argparse.ArgumentParser()
-        self.parser.add_argument("--ip", default="127.0.0.1",
+        self.parser.add_argument("--ip", default=ip,
             help="The ip of the OSC server")
-        self.parser.add_argument("--port", type=int, default=1337,
+        self.parser.add_argument("--port", type=int, default=port,
             help="The port the OSC server is listening on")
         self.args = self.parser.parse_args()
 
