@@ -56,7 +56,10 @@ class PanikDeckeServer:
 
     async def server_func(self):
         ctrlInst = Controller()
-        ctrlInst.dbg = True # set later to False when running on raspi
+        if(os.name != 'nt'):
+            ctrlInst.dbg = False # set later to False when running on raspi
+        else:
+            ctrlInst.dbg = True
         self.print_out("server_func(): Server started.")
         while(not self.shutdown):
             t_wait, out_en = ctrlInst.update(self.speed, self.stop_at)

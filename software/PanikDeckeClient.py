@@ -5,6 +5,7 @@ import time
 
 from pythonosc import udp_client
 
+
 class PanikDeckeClient:
   
     def __init__(self, ip="127.0.0.1", port=1337) -> None:
