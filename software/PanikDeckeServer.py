@@ -48,6 +48,7 @@ class PanikDeckeServer:
     async def init_server(self):
         self.server = AsyncIOOSCUDPServer((self.ip, self.port), self.dispatcher, asyncio.get_event_loop())
         self.transport, self.protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving
+        self.print_out(f"Create Server on {self.ip}:{self.port}")
         await self.server_func()
         if(os.name != 'nt'):
             GPIO.cleanup()

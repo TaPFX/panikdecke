@@ -11,16 +11,16 @@ if(not test_on_pc):
 else:
     clientInst = PanikDeckeClient()
 
-clientInst.speed(0.2) # degree per second
+#clientInst.speed(0.2) # degree per second
 
-time.sleep(5)
+#time.sleep(5)
 
-clientInst.speed(0.4) # degree per second
+#clientInst.speed(0.4) # degree per second
 
-time.sleep(5)
+#time.sleep(5)
 
-clientInst.stop_at(6.5) # degree
+#clientInst.stop_at(6.5) # degree
 
-time.sleep(15)
+#time.sleep(15)
 
 clientInst.shutdown()
