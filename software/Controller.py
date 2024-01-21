@@ -5,7 +5,7 @@ from datetime import datetime
 
 import os
 
-STEP_PER_REVOLUTION = 3200 # set this by the 3 switches
+STEP_PER_REVOLUTION = 400 # set this by the 3 switches
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
 MAX_ACCELERATION = 0.05 # 1° per second**2

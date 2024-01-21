@@ -59,10 +59,10 @@ class PanikDeckeServer:
         self.print_out("server_func(): Server started.")
         while(not self.shutdown):
             t_wait, out_en = ctrlInst.update(self.speed, self.stop_at)
-            if(os.name != 'nt'):
+            if(os.name != 'nt' and out_en):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
             await asyncio.sleep(t_wait/2)
-            if(os.name != 'nt'):
+            if(os.name != 'nt' and out_en):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
             await asyncio.sleep(t_wait/2)
         ctrlInst.dbg_plot()
