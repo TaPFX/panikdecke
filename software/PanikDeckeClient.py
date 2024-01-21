@@ -16,6 +16,7 @@ class PanikDeckeClient:
         self.args = self.parser.parse_args()
 
         self.client = udp_client.SimpleUDPClient(self.args.ip, self.args.port)
+        print(f"Created Client at {self.args.ip}:{self.args.port}")
 
     def shutdown(self):
         self.client.send_message("/shutdown", True)
