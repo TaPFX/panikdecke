@@ -17,7 +17,7 @@ async def main(frequency):
     print(f"{frequency}: {1/(sleep_meas/x_end)}")
     return 1/(sleep_meas/x_end)
 
-f = np.geomspace(10, 500, 50)
+f = np.geomspace(10, 5000, 1000)
 
 #f = [1, 10, 200, 300]
 
