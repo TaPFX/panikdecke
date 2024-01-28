@@ -5,11 +5,15 @@ from datetime import datetime
 
 import os
 
-STEP_PER_REVOLUTION = 400 # set this by the 3 switches
+# don't know why, but theory and pratice does not match...
+# +/- 10% accuracy in speed
+corr_factor = 2.7842
+
+STEP_PER_REVOLUTION = round(800*corr_factor) # set this by the 3 switches
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
-MAX_ACCELERATION = 5 # 1° per second**2
-MAX_SECONDS_PER_TURNAROUND = 3
+MAX_ACCELERATION = 0.1 # 1° per second**2
+MAX_SECONDS_PER_TURNAROUND = 1.9/corr_factor
 
 def get_datetime_str():
     return datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
@@ -41,6 +45,7 @@ class Controller:
             self.speed_ramp_down_array = None
 
             speed_new = self.limit_acc(speed)
+            #speed_new = speed
 
         else:
             if( stop_at != self.stop_at_old):
@@ -100,11 +105,11 @@ class Controller:
             self.dbg_trigger.append(1/f_trigger)
 
         if(f_trigger > STEP_PER_REVOLUTION / MAX_SECONDS_PER_TURNAROUND):
-            f_trigger = 1
             self.PANIC_OFF = True
             self.out_en = False
             self.print_out("Controller: PANIC_OFF was triggered, MAX SPEED was commanded, but this shall be prevented by software!.")
             self.print_out(f"f_trigger: {f_trigger}, f_max : {STEP_PER_REVOLUTION / MAX_SECONDS_PER_TURNAROUND}")
+            f_trigger = 1
 
         return 1/f_trigger, self.out_en
     
