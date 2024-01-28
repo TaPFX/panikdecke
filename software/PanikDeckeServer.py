@@ -11,6 +11,9 @@ from Controller import Controller, SPEED_THRESHOLD
 
 from datetime import datetime
 
+import time
+
+
 def get_datetime_str():
     return datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
 
@@ -61,14 +64,17 @@ class PanikDeckeServer:
         else:
             ctrlInst.dbg = True
         self.print_out("server_func(): Server started.")
+        last_time = time.time()
         while(not self.shutdown):
             t_wait, out_en = ctrlInst.update(self.speed, self.stop_at)
+            t_wait = np.clip(t_wait - (time.time() - last_time), 0, 1)
             if(os.name != 'nt' and out_en):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
             await asyncio.sleep(t_wait/2)
             if(os.name != 'nt' and out_en):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
             await asyncio.sleep(t_wait/2)
+            last_time = time.time()
         ctrlInst.dbg_plot()
 
     def shutdown_now(self, address, *args):

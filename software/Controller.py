@@ -5,9 +5,12 @@ from datetime import datetime
 
 import os
 
+# don't know why, but theory and pratice does not match...
+# +/- 10% accuracy in speed
 corr_factor = 2.7842
 
-STEP_PER_REVOLUTION = 800*corr_factor # set this by the 3 switches
+STEP_PER_REVOLUTION = round(800*corr_factor) # set this by the 3 switches
+
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
 MAX_ACCELERATION = 0.1 # 1° per second**2
@@ -43,6 +46,7 @@ class Controller:
             self.speed_ramp_down_array = None
 
             speed_new = self.limit_acc(speed)
+            #speed_new = speed
 
         else:
             if( stop_at != self.stop_at_old):
