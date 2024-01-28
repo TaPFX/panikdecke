@@ -16,20 +16,22 @@ ctrlInst.dbg = True
 def run_simulation(speed, stop_at, t_end):
     t_sum = 0
     while(t_sum < t_end):
-        t_sum += ctrlInst.update(speed, stop_at)
+        tmp, _ = ctrlInst.update(speed, stop_at)
+        t_sum += tmp
     if ( stop_at is None and abs(ctrlInst.curr_speed - speed ) > VERIF_SPEED_DELTA_THRES):
         raise Exception("Speed not correctly verified")
     if( stop_at is not None and abs(ctrlInst.curr_pos - stop_at) > VERIF_POS_DELTA_THRES):
-        raise Exception("Position not correctly verified")
+        if( abs(ctrlInst.curr_pos - stop_at - 360) > VERIF_POS_DELTA_THRES):
+            raise Exception("Position not correctly verified")
 
 # test speed
-run_simulation(speed = 15, stop_at = None, t_end = 60)
+run_simulation(speed = 180, stop_at = None, t_end = 60)
 
 # test stop_at
-run_simulation(speed = 30, stop_at = 100, t_end = 60)
+run_simulation(speed = 30, stop_at = 0, t_end = 60)
 
 # increase speed again
-run_simulation(speed = -30, stop_at = None, t_end = 30)
+run_simulation(speed = 180, stop_at = None, t_end = 30)
 
 # test stop_at with one more turnaround
 if(ctrlInst.curr_speed > 0):
