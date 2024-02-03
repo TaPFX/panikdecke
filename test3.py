@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 
 async def main(frequency):
     time_last = time.time()
-    x = 0
     x_end = 3
     sleep_meas = 0
     await asyncio.sleep(1 / (frequency))
@@ -18,8 +17,6 @@ async def main(frequency):
     return 1/(sleep_meas/x_end)
 
 f = np.geomspace(10, 5000, 1000)
-
-#f = [1, 10, 200, 300]
 
 f_meas = []
 for freq in f:

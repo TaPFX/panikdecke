@@ -57,6 +57,13 @@ class PanikDeckeServer:
             GPIO.cleanup()
         self.transport.close()  # Clean up serve endpoint
 
+    async def accurate_sleep(wait_time):
+        start = time.perf_counter()
+        while True:
+            if (time.perf_counter() - start) >= wait_time:
+                break
+            await asyncio.sleep(0)
+
     async def server_func(self):
         ctrlInst = Controller()
         if(os.name != 'nt'):
@@ -70,10 +77,10 @@ class PanikDeckeServer:
             t_wait = np.clip(t_wait - (time.time() - last_time), 0, 1)
             if(os.name != 'nt' and out_en):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
-            await asyncio.sleep(t_wait/2)
+            await self.accurate_sleep(t_wait/2)
             if(os.name != 'nt' and out_en):
                 GPIO.output(gpio_pin, not GPIO.input(gpio_pin))
-            await asyncio.sleep(t_wait/2)
+            await  self.accurate_sleep(t_wait/2)
             last_time = time.time()
         ctrlInst.dbg_plot()
 

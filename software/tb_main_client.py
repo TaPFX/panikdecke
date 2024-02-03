@@ -19,11 +19,11 @@ clientInst = PanikDeckeClient(ip=Raspi_IP)
 #clientInst = PanikDeckeClient()
 
 clientInst.speed(180) # degree per second
-sleep(20)
-clientInst.stop_at(0) # degree
-sleep(20)
-clientInst.speed(180) # degree per second
-sleep(20)
-clientInst.stop_at(0) # degree
-sleep(20)
+sleep(60)
+#clientInst.stop_at(0) # degree
+#sleep(20)
+#clientInst.speed(180) # degree per second
+#sleep(20)
+#clientInst.stop_at(0) # degree
+#sleep(20)
 clientInst.shutdown()
