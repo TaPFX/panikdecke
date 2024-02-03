@@ -143,7 +143,7 @@ class Controller:
                 
     def get_switch_state(self):
         if(os.name != 'nt'):
-            if(GPIO.input(channel) == GPIO.LOW):
+            if(GPIO.input(sw_gpio_pin) == GPIO.LOW):
                 return True
             else:
                 return False
