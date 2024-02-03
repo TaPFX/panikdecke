@@ -13,6 +13,8 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+SW_DEBOUNCE_TICKS = 10
+
 STEP_PER_REVOLUTION = round(800) # set this by the 3 switches
 
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
@@ -41,6 +43,8 @@ class Controller:
         self.dbg_pos = []
         self.dbg_trigger = []
         self.dbg_curr_speed = []
+
+        self.switch_lock = 0 # switch debouncer
 
     def update(self, speed=0, stop_at=None):
         # checks if a switch activity was performed
@@ -128,10 +132,11 @@ class Controller:
 
     def update_pos(self, f_trigger, stop_at):
         new_state = self.get_switch_state()
-        if(self.switch_state == new_state or stop_at is not None):
+        if(self.switch_state == new_state or stop_at is not None or self.switch_lock != 0):
             self.curr_pos += self.curr_speed*1/f_trigger
             self.curr_pos = self.curr_pos % 360
         else:
+            self.switch_lock = SW_DEBOUNCE_TICKS # wait SW_DEBOUNCE_TICKS ticks for debounce
             if(new_state == True):
                 self.curr_pos = 0
                 print("Switch detecting 0°")
@@ -139,6 +144,8 @@ class Controller:
                 self.curr_pos = 180
                 print("Switch detecting 180°")
 
+        if( self.switch_lock > 0):
+            self.switch_lock -= 1
         self.switch_state = new_state
                 
     def get_switch_state(self):
