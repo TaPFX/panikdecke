@@ -13,7 +13,7 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-SW_DEBOUNCE_TICKS = 25
+SW_DEBOUNCE_TICKS = 10
 
 STEP_PER_REVOLUTION = round(800) # set this by the 3 switches
 
@@ -146,7 +146,7 @@ class Controller:
                 else:
                     self.curr_pos = 180
                     #print("Switch detecting 180°")
-        print(new_state, self.switch_lock)
+        print(self.switch_state, new_state, self.switch_lock)
                 
     def get_switch_state(self):
         if(os.name != 'nt'):
