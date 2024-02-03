@@ -136,15 +136,15 @@ class Controller:
             self.curr_pos += self.curr_speed*1/f_trigger
             self.curr_pos = self.curr_pos % 360
         else:
-            self.switch_lock = SW_DEBOUNCE_TICKS # wait SW_DEBOUNCE_TICKS ticks for debounce
+            self.switch_lock = 0 # SW_DEBOUNCE_TICKS # wait SW_DEBOUNCE_TICKS ticks for debounce
             self.switch_state = new_state
             if(new_state == True):
                 self.curr_pos = 0
-                print("Switch detecting 0°")
+                #print("Switch detecting 0°")
             else:
                 self.curr_pos = 180
-                print("Switch detecting 180°")
-
+                #print("Switch detecting 180°")
+        print(new_state)
         if( self.switch_lock > 0):
             self.switch_lock -= 1
                 
