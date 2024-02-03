@@ -57,7 +57,7 @@ class PanikDeckeServer:
             GPIO.cleanup()
         self.transport.close()  # Clean up serve endpoint
 
-    async def accurate_sleep(wait_time):
+    async def accurate_sleep(self, wait_time):
         start = time.perf_counter()
         while True:
             if (time.perf_counter() - start) >= wait_time:
