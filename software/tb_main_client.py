@@ -18,8 +18,8 @@ clientInst = PanikDeckeClient(ip=Raspi_IP)
 # or on localhost:
 #clientInst = PanikDeckeClient()
 
-clientInst.speed(180) # degree per second
-sleep(10)
+clientInst.speed(-180) # degree per second
+sleep(60)
 #clientInst.stop_at(0) # degree
 
 #sleep(5)
