@@ -147,8 +147,6 @@ class Controller:
                     self.curr_pos = 180
                     #print("Switch detecting 180°")
         print(new_state, self.switch_lock)
-        if( self.switch_lock > 0):
-            self.switch_lock -= 1
                 
     def get_switch_state(self):
         if(os.name != 'nt'):
