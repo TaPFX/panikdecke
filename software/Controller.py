@@ -13,7 +13,7 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-SW_DEBOUNCE_TICKS = 10
+SW_DEBOUNCE_TICKS = 25
 
 STEP_PER_REVOLUTION = round(800) # set this by the 3 switches
 
@@ -33,7 +33,7 @@ class Controller:
         self.stop_at_old = None
         self.speed_ramp_down_array = None
 
-        self.switch_state = False
+        self.switch_state = self.get_switch_state()
         self.out_en = False
 
         self.PANIC_OFF = False
