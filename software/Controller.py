@@ -142,11 +142,11 @@ class Controller:
                 self.switch_state = new_state
                 if(new_state == True):
                     self.curr_pos = 0
-                    #print("Switch detecting 0°")
+                    print("Switch detecting 0°")
                 else:
                     self.curr_pos = 180
-                    #print("Switch detecting 180°")
-        print(self.switch_state, new_state, self.switch_lock)
+                    print("Switch detecting 180°")
+        # print(self.switch_state, new_state, self.switch_lock)
                 
     def get_switch_state(self):
         if(os.name != 'nt'):
