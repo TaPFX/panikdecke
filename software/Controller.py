@@ -5,6 +5,14 @@ from datetime import datetime
 
 import os
 
+if(os.name != 'nt'): # can be tested on windows shell without RPi
+    IS_RASPI = True
+    import RPi.GPIO as GPIO
+    # GPIO-Pin-Nummer
+    sw_gpio_pin = 17
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 STEP_PER_REVOLUTION = round(800) # set this by the 3 switches
 
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
@@ -126,8 +134,10 @@ class Controller:
         else:
             if(new_state == True):
                 self.curr_pos = 0
+                print("Switch detecting 0°")
             else:
                 self.curr_pos = 180
+                print("Switch detecting 180°")
 
         self.switch_state = new_state
                 
