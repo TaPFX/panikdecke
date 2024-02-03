@@ -142,8 +142,13 @@ class Controller:
         self.switch_state = new_state
                 
     def get_switch_state(self):
-        # TODO read Pin Polarity of switch from Raspi
-        return False
+        if(os.name != 'nt'):
+            if(GPIO.input(channel) == GPIO.LOW):
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def trigger_motor(self, speed):
         # check if commanded speed is larger than threshold
