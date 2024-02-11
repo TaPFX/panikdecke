@@ -15,13 +15,16 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
     GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(sw_gpio_dir_pin, GPIO.OUT)
 
+# wait x ticks without changing polarity, then accept event
 SW_DEBOUNCE_TICKS = 5
 
+# Gear Ratio
 GEAR_TEETH_SMALL = 18
 GEAR_TEETH_LARGE = 56
 #GEAR_TEETH_LARGE = 180 # final
 GEAR_TEETH_RATIO = GEAR_TEETH_LARGE / GEAR_TEETH_SMALL
 
+# Offset calibration of the switch in degree
 SWITCH_OFFSET_DEG = 5
 #SWITCH_OFFSET_DEG = ? # for final
 
@@ -30,8 +33,9 @@ STEP_PER_REVOLUTION = round(GEAR_TEETH_RATIO*800) # set this by the 3 switches
 
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
-MAX_ACCELERATION = 0.3 # 1° per second**2
-MAX_SECONDS_PER_TURNAROUND = 1.9
+MAX_ACCELERATION = 0.3 # 1° per second**2, TODO adjust
+MAX_SECONDS_PER_TURNAROUND = 5.9 # only for safety checks, 360 / 5.9 = 61 deg per second so 60 is max
+# choose a slightly below value
 
 def get_datetime_str():
     return datetime.now().strftime("%d-%m-%Y, %H:%M:%S")
@@ -162,7 +166,6 @@ class Controller:
                 else:
                     self.curr_pos = 180 + self.sw_offset
                     self.print_out("Switch detecting 180°.")
-        # print(self.switch_state, new_state, self.switch_lock)
                 
     def get_switch_state(self):
         if(os.name != 'nt'):

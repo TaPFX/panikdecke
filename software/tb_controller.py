@@ -28,7 +28,7 @@ def run_simulation(speed, stop_at, t_end):
             raise Exception("Position not correctly verified")
 
 # test speed
-run_simulation(speed = 45, stop_at = None, t_end = 60)
+run_simulation(speed = 60, stop_at = None, t_end = 60)
 
 # test stop_at
 run_simulation(speed = 30, stop_at = 0, t_end = 60)

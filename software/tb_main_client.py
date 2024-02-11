@@ -16,8 +16,6 @@ Raspi_IP = "192.168.178.90"
 
 stop_at = 90
 
-#TODO implement is server ready?
-
 clientInst = PanikDeckeClient(ip=Raspi_IP)
 # or on localhost:
 #clientInst = PanikDeckeClient()
