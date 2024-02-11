@@ -185,11 +185,11 @@ class Controller:
         if(speed > 0):
             direction = True
             if(os.name != 'nt'):
-                GPIO.output(gpio_pin, 0)
+                GPIO.output(sw_gpio_dir_pin, 0)
         elif(speed < 0):
             direction = False
             if(os.name != 'nt'):
-                GPIO.output(gpio_pin, 1)
+                GPIO.output(sw_gpio_dir_pin, 1)
         
         if(not self.PANIC_OFF):
             pass #trigger here

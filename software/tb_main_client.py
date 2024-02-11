@@ -25,6 +25,9 @@ sleep(10)
 clientInst.stop_at(stop_at) # degree
 sleep(10)
 
+clientInst.shutdown()
+exit()
+
 clientInst.speed(45) # degree per second
 sleep(10)
 clientInst.stop_at(stop_at) # degree
