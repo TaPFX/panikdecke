@@ -13,7 +13,7 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-SW_DEBOUNCE_TICKS = 10
+SW_DEBOUNCE_TICKS = 5
 
 GEAR_TEETH_SMALL = 18
 GEAR_TEETH_LARGE = 56
