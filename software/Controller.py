@@ -55,6 +55,7 @@ class Controller:
     def update(self, speed=0, stop_at=None):
         # checks if a switch activity was performed
         # trigger frequency
+        speed = - speed # hack
         if(stop_at is None):
             self.stop_at_old = stop_at
             self.speed_ramp_down_array = None

@@ -14,33 +14,35 @@ def sleep(wait_time):
 
 Raspi_IP = "192.168.178.90"
 
+stop_at = 90
+
 clientInst = PanikDeckeClient(ip=Raspi_IP)
 # or on localhost:
 #clientInst = PanikDeckeClient()
 
-clientInst.speed(-45) # degree per second
+clientInst.speed(45) # degree per second
 sleep(10)
-clientInst.stop_at(45) # degree
+clientInst.stop_at(stop_at) # degree
 sleep(5)
 
-clientInst.speed(-45) # degree per second
+clientInst.speed(45) # degree per second
 sleep(10)
-clientInst.stop_at(45) # degree
+clientInst.stop_at(stop_at) # degree
 sleep(5)
 
-clientInst.speed(-45) # degree per second
+clientInst.speed(45) # degree per second
 sleep(10)
-clientInst.stop_at(45) # degree
+clientInst.stop_at(stop_at) # degree
 sleep(5)
 
-clientInst.speed(-45) # degree per second
+clientInst.speed(45) # degree per second
 sleep(10)
-clientInst.stop_at(45) # degree
+clientInst.stop_at(stop_at) # degree
 sleep(5)
 
-clientInst.speed(-45) # degree per second
+clientInst.speed(45) # degree per second
 sleep(10)
-clientInst.stop_at(45) # degree
+clientInst.stop_at(stop_at) # degree
 sleep(5)
 
 clientInst.shutdown()
