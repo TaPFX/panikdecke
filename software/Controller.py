@@ -62,7 +62,7 @@ class Controller:
     def update(self, speed=0, stop_at=None):
         # checks if a switch activity was performed
         # trigger frequency
-        speed = - speed # hack
+
         if(stop_at is None):
             self.stop_at_old = stop_at
             self.speed_ramp_down_array = None
@@ -71,6 +71,8 @@ class Controller:
             #speed_new = speed
 
         else:
+            stop_at = stop_at % 360 # accepts all input angles
+
             if( stop_at != self.stop_at_old):
 
                 self.stop_at_old = stop_at

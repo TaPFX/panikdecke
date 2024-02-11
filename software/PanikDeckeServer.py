@@ -86,7 +86,7 @@ class PanikDeckeServer:
 
     def shutdown_now(self, address, *args):
         self.shutdown = args[0]
-        self.print_out("shutodwn_now(): Shutdown received.")
+        self.print_out("shutdown_now(): Shutdown received.")
 
     def set_speed(self, address, *args):
         self.stop_at = None
