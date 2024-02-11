@@ -15,11 +15,17 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
 
 SW_DEBOUNCE_TICKS = 10
 
-STEP_PER_REVOLUTION = round(800) # set this by the 3 switches
+GEAR_TEETH_SMALL = 18
+GEAR_TEETH_LARGE = 56
+#GEAR_TEETH_LARGE = 180 # final
+GEAR_TEETH_RATIO = GEAR_TEETH_LARGE / GEAR_TEETH_SMALL
+
+STEP_PER_REVOLUTION = round(GEAR_TEETH_RATIO*800) # set this by the 3 switches
+# error is small as we reset the position by the switches
 
 LSB_ANGLE = 360 / STEP_PER_REVOLUTION
 SPEED_THRESHOLD = LSB_ANGLE / 1 # 0.9° per second is the lower boundary
-MAX_ACCELERATION = 1.0 # 1° per second**2
+MAX_ACCELERATION = 0.3 # 1° per second**2
 MAX_SECONDS_PER_TURNAROUND = 1.9
 
 def get_datetime_str():
