@@ -10,8 +10,10 @@ if(os.name != 'nt'): # can be tested on windows shell without RPi
     import RPi.GPIO as GPIO
     # GPIO-Pin-Nummer
     sw_gpio_pin = 17
+    sw_gpio_dir_pin = 27
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(sw_gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(sw_gpio_dir_pin, GPIO.OUT)
 
 SW_DEBOUNCE_TICKS = 5
 
@@ -19,6 +21,9 @@ GEAR_TEETH_SMALL = 18
 GEAR_TEETH_LARGE = 56
 #GEAR_TEETH_LARGE = 180 # final
 GEAR_TEETH_RATIO = GEAR_TEETH_LARGE / GEAR_TEETH_SMALL
+
+SWITCH_OFFSET_DEG = 10
+#SWITCH_OFFSET_DEG = ? # for final
 
 STEP_PER_REVOLUTION = round(GEAR_TEETH_RATIO*800) # set this by the 3 switches
 # error is small as we reset the position by the switches
@@ -38,6 +43,8 @@ class Controller:
         self.curr_speed = 0
         self.stop_at_old = None
         self.speed_ramp_down_array = None
+
+        self.sw_offset = SWITCH_OFFSET_DEG
 
         self.switch_state = self.get_switch_state()
         self.out_en = False
@@ -148,11 +155,11 @@ class Controller:
             if(self.switch_lock > SW_DEBOUNCE_TICKS):
                 self.switch_state = new_state
                 if(new_state == True):
-                    self.curr_pos = 0
-                    self.print_out("Switch detecting 0°")
+                    self.curr_pos = 0 + self.sw_offset
+                    self.print_out("Switch detecting 0°.")
                 else:
-                    self.curr_pos = 180
-                    self.print_out("Switch detecting 180°")
+                    self.curr_pos = 180 + self.sw_offset
+                    self.print_out("Switch detecting 180°.")
         # print(self.switch_state, new_state, self.switch_lock)
                 
     def get_switch_state(self):
@@ -177,8 +184,12 @@ class Controller:
         # TODO trigger motor here and set direction pin polarity
         if(speed > 0):
             direction = True
+            if(os.name != 'nt'):
+                GPIO.output(gpio_pin, 0)
         elif(speed < 0):
             direction = False
+            if(os.name != 'nt'):
+                GPIO.output(gpio_pin, 1)
         
         if(not self.PANIC_OFF):
             pass #trigger here

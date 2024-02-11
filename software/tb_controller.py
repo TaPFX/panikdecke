@@ -12,6 +12,7 @@ VERIF_POS_DELTA_THRES = 1 # auf 1° genau
 
 ctrlInst = Controller()
 ctrlInst.dbg = True
+ctrlInst.sw_offset = 0 # remove offset for verification
 
 def run_simulation(speed, stop_at, t_end):
     t_sum = 0
